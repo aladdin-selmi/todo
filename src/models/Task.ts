@@ -1,81 +1,58 @@
+import { getModelForClass, DocumentType, ReturnModelType, modelOptions, prop, defaultClasses, mongoose } from "@typegoose/typegoose";
 import { Field, ObjectType } from "type-graphql";
 import { TaskCreateInput, TaskUpdateInput } from "../api/graphql/inputTypes/TaskInputTypes";
 import { Comment } from "./Comment";
 
-// Static data before integrating a database
-var tasks = [
-	{id: "1", title: 'title 1', content: 'content 1', done: false },
-	{id: "2", title: 'title 2', content: 'content 2', done: false },
-	{id: "3", title: 'title 3', content: 'content 3', done: true },
-	{id: "4", title: 'title 4', content: 'content 4', done: false },
-	{id: "5", title: 'title 5', content: 'content 5', done: true },
-]
-
 /**
  * Task model. will be synced with Graphql and mongoose schema
  */
-
 @ObjectType({ description: "Task / Todo model" })
-export class Task {
+@modelOptions({ schemaOptions: { timestamps: true} })
+export class Task extends defaultClasses.TimeStamps {
 
 	// id can be null before commiting to db.
 	@Field({nullable: true})
 	id: string;
 
 	@Field()
+	@prop({required: true})
 	title: string;
 
 	@Field()
+	@prop({required: true})
 	content: string;
 
 	@Field()
-	done: boolean;
+	@prop({required: true, default: false})
+	done: boolean = false;
 
 	@Field(() => [Comment], {nullable: true})
+	@prop()
 	comments?: Comment[] = [];
 
-	constructor(title:string, content: string, done:boolean = false) {
-		this.title = title;
-		this.content = content;
-		this.done = done;
-	}
-
-
-	static async find() {
-		return tasks;
-	}
-
-	//operations to emulate db
-	static async findOne(id: string) {
-		return tasks.find((task) => task.id === id);
-	}
-
-	static async insert(input: TaskCreateInput) {
-		const task = new Task( input.title, input.content );
-		tasks.push(task);
+	static async create(input: TaskCreateInput) : Promise< DocumentType<Task> > {
+		let task = new TaskModel({title: input.title, content: input.title});
+		await task.save();
 		return task;
 	}
 
-	static async update(id: string, input: TaskUpdateInput) {
-		let task = tasks.find( t => t.id == id) as Task;
-		if(!task) return;
-		task = Object.assign(task, {...input});
-		return task;
-	}
-
-	static async markDone(id: string) {
-		let task = tasks.find( t => t.id == id) as Task;
-		if(!task) return;
+	static async markDone(_id: string) : Promise< DocumentType<Task> | null > {
+		let task = await TaskModel.findOne({_id});
+		if(!task) throw new Error("Task not found");
 		task.done = true;
+
+		await task.save();
 		return task;
 	}
 
-	static async addComment(id: string, content: string) {
-		let task = tasks.find( t => t.id == id) as Task;
-		if(!task) return;
+	static async addComment(_id: string, content: string) : Promise< DocumentType<Task> > {
+		let task = await TaskModel.findOne({_id});
+		if(!task) throw new Error("Task not found");
 		if(!task.comments) task.comments = [];
 		task.comments.push(new Comment(content));
-		return task;
+		return await task.save();
 	}
 
 }
+
+export const TaskModel = getModelForClass(Task);
