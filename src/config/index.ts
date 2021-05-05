@@ -14,6 +14,9 @@ export default {
 	port: parseInt(process.env.PORT!) || 3000,
 
 	//Graphql endpoint
-	graphqlPath: process.env.GQL_PATH || "/graphql"
+	graphqlPath: process.env.GQL_PATH || "/graphql",
+
+	// Mongo url
+	mongoUrl: process.env.MONGO_URL,
 
 }
