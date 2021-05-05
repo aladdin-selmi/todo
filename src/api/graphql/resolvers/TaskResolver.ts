@@ -32,6 +32,11 @@ export class TaskResolver {
   @Mutation(returns => Task, { description: "Mark a task as done" })
   async markTaskDone(@Arg("id") id: string): Promise<Task | undefined> {
 		return await Task.markDone(id);
+	}
+
+  @Mutation(returns => Task, { description: "Mark a task as done" })
+  async addComment(@Arg("id") id: string, @Arg("content") content: string ): Promise<Task | undefined> {
+		return await Task.addComment(id, content);
   }
 
 }
