@@ -30,8 +30,6 @@ export async function setupApollo (app: Application) {
 
 			// Get the user token from the headers.
 			if(!req.headers.authorization) return;
-			console.log(req.headers);
-
 
 			const token = req.headers.authorization.split(" ")[1];
 			if(!token) return;

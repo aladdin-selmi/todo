@@ -1,4 +1,4 @@
-import { defaultClasses, DocumentType, getModelForClass, prop } from "@typegoose/typegoose";
+import { defaultClasses, DocumentType, getModelForClass, mongoose, Prop, prop } from "@typegoose/typegoose";
 import { Field, ObjectType } from "type-graphql";
 import { SignupInput } from "../api/graphql/inputTypes/AuthInputTypes";
 import bcrypt from "bcryptjs";
@@ -12,6 +12,9 @@ import config from "../config";
  */
 @ObjectType({ description: "User model" })
 export class User extends defaultClasses.TimeStamps {
+
+	@Field()
+	_id: string;
 
 	@Field()
 	@prop()
@@ -32,7 +35,8 @@ export class User extends defaultClasses.TimeStamps {
 		// create the new user
 		let user = new UserModel({...input});
 		user.password = await bcrypt.hash(user.password, 10);
-		return await user.save();
+		await user.save()
+		return user;
 	}
 
 	static async login(email: string, password: string) : Promise< LoginOutput > {
@@ -54,8 +58,6 @@ export class User extends defaultClasses.TimeStamps {
 	}
 
 	static async userFromToken(token: string) : Promise< string > {
-		console.log('token ', token);
-
 		try {
 			let data = jwt.verify(token, config.secret) as any;
 			return data.userId || '';

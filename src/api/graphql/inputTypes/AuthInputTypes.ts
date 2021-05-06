@@ -8,7 +8,7 @@ import { User } from "../../../models/User";
 @InputType()
 export class SignupInput implements Pick<User, "name" | "email" | "password"> {
 
-	@Field()
+	@Field({nullable: true})
 	name: string;
 
 	@Field()
