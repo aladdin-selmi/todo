@@ -35,6 +35,10 @@ export class Task extends defaultClasses.TimeStamps {
 	@prop({ref: () => UserModel})
 	createdBy?: Ref<User>;
 
+	@Field(()=> [User], {nullable: true})
+	@prop({ref: () => UserModel})
+	sharedWith?: Ref<User>[] = [];
+
 	static async create(_id: string, input: TaskCreateInput) : Promise< DocumentType<Task> > {
 		let task = new TaskModel({title: input.title, content: input.title, createdBy: _id});
 		await task.save();
@@ -60,13 +64,22 @@ export class Task extends defaultClasses.TimeStamps {
 	}
 
 	static async userTasks(_id: string) {
-		console.log(_id);
 		return await TaskModel.find({createdBy: _id});
 	}
 
 	static async shareWith(_id: string, userId: string) {
-		console.log(_id);
-		return await TaskModel.findOne({_id: _id});
+		let task = await TaskModel.findOne({_id});
+		if(!task) throw new Error("Task not found");
+		if(!task.sharedWith) task.sharedWith = [];
+
+		// we should not share with ourselves
+		if(task.createdBy == userId) throw new Error("Cannot share with owner");
+		// or share with same user multiple times
+		if(task.sharedWith.includes(userId)) throw new Error("User already shared with");
+
+		task.sharedWith.push(userId);
+		await task.save();
+		return task;
 	}
 
 }
