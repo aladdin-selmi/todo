@@ -61,7 +61,12 @@ export class Task extends defaultClasses.TimeStamps {
 
 	static async userTasks(_id: string) {
 		console.log(_id);
-		return await TaskModel.find();
+		return await TaskModel.find({createdBy: _id});
+	}
+
+	static async shareWith(_id: string, userId: string) {
+		console.log(_id);
+		return await TaskModel.findOne({_id: _id});
 	}
 
 }

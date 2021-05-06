@@ -20,8 +20,10 @@ export class TaskResolver {
 
 	@Query(() => Task,{ description: "Get a single task with id" })
 	@UseMiddleware(isConnected)
-  async task(@Arg("id") id: string) {
-    return await TaskModel.findOne({_id: id});
+  async task(@Arg("id") id: string, @Ctx() ctx:Context) {
+		const task = await TaskModel.findOne({_id: id, createdBy: ctx.userId});
+		if(!task) throw new Error("Not found");
+    return task;
 	}
 
 	@Mutation(returns => Task, { description: "Create a task" })
@@ -50,6 +52,12 @@ export class TaskResolver {
 	@UseMiddleware(isConnected)
   async addComment(@Arg("id") id: string, @Arg("content") content: string ): Promise<DocumentType<Task>> {
 		return await TaskModel.addComment(id, content);
+	}
+
+	@Mutation(returns => Task, { description: "Comment on task" })
+	@UseMiddleware(isConnected)
+  async shareWith(@Arg("taskId") taskId: string, @Arg("userId") userId: string): Promise<DocumentType<Task> | null> {
+		return await TaskModel.shareWith(taskId, userId);
   }
 
 }
