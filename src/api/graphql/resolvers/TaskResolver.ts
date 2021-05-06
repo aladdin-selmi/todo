@@ -3,7 +3,7 @@ import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql
 import { DocumentType } from "@typegoose/typegoose";
 import { Task, TaskModel } from "../../../models/Task";
 import { TaskCreateInput, TaskUpdateInput } from "../inputTypes/TaskInputTypes";
-import { isConnected } from "../middlewares/authMiddlware";
+import { isConnected, isOwner } from "../middlewares/authMiddlware";
 import { Context } from "../../../types/context";
 
 /**
@@ -31,7 +31,7 @@ export class TaskResolver {
 	}
 
 	@Mutation(returns => Task, { description: "Update a task" })
-	@UseMiddleware(isConnected)
+	@UseMiddleware(isConnected, isOwner(TaskModel))
   async updateTask(@Arg("id") id: string, @Arg("task") input: TaskUpdateInput): Promise<Task|null> {
 		let task = await TaskModel.updateOne({_id: id}, {...input});
 		task = await TaskModel.findOne({_id: id});
@@ -41,7 +41,7 @@ export class TaskResolver {
 	}
 
 	@Mutation(returns => Task, { description: "Mark a task as done" })
-	@UseMiddleware(isConnected)
+	@UseMiddleware(isConnected, isOwner(TaskModel))
   async markTaskDone(@Arg("id") id: string): Promise<DocumentType<Task> | null> {
 		return await TaskModel.markDone(id);
 	}
