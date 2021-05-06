@@ -33,7 +33,8 @@ export class TaskResolver {
 	@Mutation(returns => Task, { description: "Update a task" })
 	@UseMiddleware(isConnected)
   async updateTask(@Arg("id") id: string, @Arg("task") input: TaskUpdateInput): Promise<Task|null> {
-		let task = await TaskModel.findOneAndUpdate({_id: id}, {...input});
+		let task = await TaskModel.updateOne({_id: id}, {...input});
+		task = await TaskModel.findOne({_id: id});
 		if(!task) throw new Error("Task not found");
 		// TODO: Show proper errors
 		return task;
