@@ -3,7 +3,7 @@ import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql
 import { DocumentType } from "@typegoose/typegoose";
 import { Task, TaskModel } from "../../../models/Task";
 import { TaskCreateInput, TaskUpdateInput } from "../inputTypes/TaskInputTypes";
-import { isConnected, isOwner } from "../middlewares/authMiddlware";
+import { isConnected, isOwner, isOwnerOrFriend } from "../middlewares/authMiddlware";
 import { Context } from "../../../types/context";
 
 /**
@@ -15,13 +15,13 @@ export class TaskResolver {
 	@Query(() => [Task],{ description: "Get all tasks" })
 	@UseMiddleware(isConnected)
   async tasks(@Ctx() ctx:Context) {
-    return await TaskModel.userTasks(ctx.userId!);
+    return await TaskModel.tasks(ctx.userId!);
 	}
 
 	@Query(() => Task,{ description: "Get a single task with id" })
-	@UseMiddleware(isConnected)
+	@UseMiddleware(isConnected, isOwnerOrFriend(TaskModel))
   async task(@Arg("id") id: string, @Ctx() ctx:Context) {
-		const task = await TaskModel.findOne({_id: id, createdBy: ctx.userId});
+		const task = await TaskModel.task(id, ctx.userId!);
 		if(!task) throw new Error("Not found");
     return task;
 	}
@@ -49,12 +49,12 @@ export class TaskResolver {
 	}
 
 	@Mutation(returns => Task, { description: "Comment on task" })
-	@UseMiddleware(isConnected)
+	@UseMiddleware(isConnected, isOwnerOrFriend(TaskModel))
   async addComment(@Arg("id") id: string, @Arg("content") content: string ): Promise<DocumentType<Task>> {
 		return await TaskModel.addComment(id, content);
 	}
 
-	@Mutation(returns => Task, { description: "Comment on task" })
+	@Mutation(returns => Task, { description: "Share with others" })
 	@UseMiddleware(isConnected)
   async shareWith(@Arg("taskId") taskId: string, @Arg("userId") userId: string): Promise<DocumentType<Task> | null> {
 		return await TaskModel.shareWith(taskId, userId);

@@ -63,8 +63,21 @@ export class Task extends defaultClasses.TimeStamps {
 		return task;
 	}
 
-	static async userTasks(_id: string) {
-		return await TaskModel.find({createdBy: _id});
+	static async tasks(_id: string) {
+		return await TaskModel.find({$or: [
+			{createdBy: _id}, // the user is the owner
+			{sharedWith: [_id]} // the user is listed in sharedWith
+		]});
+	}
+
+	static async task(_id: string, userId: string) {
+		return await TaskModel.findOne({
+			_id: _id,
+			$or: [
+				{createdBy: userId}, // the user is the owner
+				{sharedWith: [userId]} // the user is listed in sharedWith
+			]
+		});
 	}
 
 	static async shareWith(_id: string, userId: string) {
