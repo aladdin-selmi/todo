@@ -1,6 +1,3 @@
-import { mongoose, ReturnModelType } from "@typegoose/typegoose";
-import { ModelType } from "@typegoose/typegoose/lib/types";
-import { Document, Model } from "mongoose";
 import { MiddlewareFn } from "type-graphql";
 import { Context } from "../../../types/context";
 
@@ -41,8 +38,6 @@ export function isOwnerOrFriend(Model: any): MiddlewareFn<Context> {
 
 		const isOwner = doc.createdBy._id == userId;
 		const isFriend = doc.sharedWith.includes(userId);
-
-		console.log(isOwner, isFriend);
 
 		if(!isOwner && !isFriend) throw new Error("Not authorized");
 

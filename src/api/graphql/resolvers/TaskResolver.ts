@@ -50,8 +50,11 @@ export class TaskResolver {
 
 	@Mutation(returns => Task, { description: "Comment on task" })
 	@UseMiddleware(isConnected, isOwnerOrFriend(TaskModel))
-  async addComment(@Arg("id") id: string, @Arg("content") content: string ): Promise<DocumentType<Task>> {
-		return await TaskModel.addComment(id, content);
+  async addComment(
+		@Arg("id") id: string,
+		@Arg("content") content: string,
+		@Ctx() ctx:Context ): Promise<DocumentType<Task>> {
+		return await TaskModel.addComment(id, content, ctx.userId!);
 	}
 
 	@Mutation(returns => Task, { description: "Share with others" })

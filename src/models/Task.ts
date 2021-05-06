@@ -1,7 +1,7 @@
 import { getModelForClass, DocumentType, ReturnModelType, modelOptions, prop, defaultClasses, mongoose, Ref } from "@typegoose/typegoose";
 import { Field, ObjectType } from "type-graphql";
 import { TaskCreateInput, TaskUpdateInput } from "../api/graphql/inputTypes/TaskInputTypes";
-import { Comment } from "./Comment";
+import { Comment, CommentModel } from "./Comment";
 import { User, UserModel } from "./User";
 
 /**
@@ -54,11 +54,11 @@ export class Task extends defaultClasses.TimeStamps {
 		return task;
 	}
 
-	static async addComment(_id: string, content: string) : Promise< DocumentType<Task> > {
+	static async addComment(_id: string, content: string, userId: string) : Promise< DocumentType<Task> > {
 		let task = await TaskModel.findOne({_id});
 		if(!task) throw new Error("Task not found");
-		if(!task.comments) task.comments = [];
-		task.comments.push(new Comment(content));
+		if(!task.comments) task.comments = []; // just in case
+		task.comments.push(new CommentModel({content: content, author: userId}));
 		await task.save()
 		return task;
 	}

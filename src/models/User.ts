@@ -16,7 +16,7 @@ export class User extends defaultClasses.TimeStamps {
 	@Field()
 	_id: string;
 
-	@Field()
+	@Field({nullable: true})
 	@prop()
 	name?: string;
 
