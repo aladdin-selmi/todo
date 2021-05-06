@@ -19,4 +19,7 @@ export default {
 	// Mongo url
 	mongoUrl: process.env.MONGO_URL,
 
+	// secret
+	secret: process.env.SECRET || "aladdinsecret",
+
 }
