@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 
 // Set the NODE_ENV to 'dev' by default
-process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const envFound = dotenv.config();
 
