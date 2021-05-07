@@ -43,7 +43,7 @@ To run the tests. In your terminal execute :
 ```sh
 npm test
 ```
-**Note that** only optimat scenario is tested. with critical exceptions.
+**Note that** only optimal scenario is tested. with critical exceptions.
 
 ---
 ### Featurs
@@ -61,5 +61,6 @@ npm test
 - More tests are needed.
 - Graphql schema docs need to be improved.
 - Graphql Response ( error messages and status ) need to be improved.
+- Maybe something else... ¯\\\_(ツ)_/¯
 
 ---
