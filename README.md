@@ -1,4 +1,4 @@
-# Todo App
+# Todo Backend App
 A todo app with authentication, shareable tasks and comments.
 
 
