@@ -49,10 +49,10 @@ npm test
 ### Featurs
 
 - Authenticate
-- List all Tasks
-- Get and edit task
+- List all Tasks (own and shared by others)
+- Get, edit and delete task
 - Mark task as done
-- Comment on task
+- Comment on task (owner and users shared with)
 - share task with a user
 
 ---

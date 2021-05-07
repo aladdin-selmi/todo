@@ -1,3 +1,4 @@
+import { mongoose } from "@typegoose/typegoose";
 import { MiddlewareFn } from "type-graphql";
 import { Context } from "../../../types/context";
 
@@ -15,6 +16,9 @@ export const isConnected: MiddlewareFn<Context> = ({context}, next) => {
 export function isOwner(Model: any): MiddlewareFn<Context> {
   return async ({context, args}, next) => {
 		let userId = context.userId;
+
+		if(!mongoose.Types.ObjectId.isValid(args.id))
+			throw new Error("Not found");
 
 		let doc = await Model.findOne({_id: args.id});
 		if(!doc) throw new Error("Not found");

@@ -61,6 +61,13 @@ export class TaskResolver {
 	@UseMiddleware(isConnected)
   async shareWith(@Arg("taskId") taskId: string, @Arg("userId") userId: string): Promise<DocumentType<Task> | null> {
 		return await TaskModel.shareWith(taskId, userId);
-  }
+	}
+
+	@Mutation(returns => Boolean, { description: "Delete a task" })
+	@UseMiddleware(isConnected, isOwner(TaskModel))
+  async deleteTask(@Arg("id") id: string): Promise<Boolean> {
+		let res = await TaskModel.deleteOne({_id: id});
+		return !!res.ok;
+	}
 
 }
