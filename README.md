@@ -1,8 +1,7 @@
 # Todo App
-
 A todo app with authentication, shareable tasks and comments.
 
----
+
 ### Built with:
  - [Nodejs](https://nodejs.org/) and [TypeScript](https://www.typescriptlang.org/)
  - [Express](https://expressjs.com/)
@@ -10,6 +9,7 @@ A todo app with authentication, shareable tasks and comments.
  - [mongoose](https://mongoosejs.com/) + [typegoose](https://github.com/typegoose/typegoose)
  - [Jest](https://jestjs.io/)
 
+---
 ### Getting started
 
 To run the app using Docker **(Recommended)** . In your terminal execute :
