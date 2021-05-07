@@ -1,7 +1,7 @@
 import { Application, request, response } from "express";
 const { ApolloServer, gql } = require('apollo-server-express');
 import config from "../../config";
-import { buildTypeDefsAndResolvers } from "type-graphql";
+import { buildTypeDefsAndResolvers, buildSchema } from "type-graphql";
 import { TaskResolver } from "./resolvers/TaskResolver";
 import { AuthResolver } from "./resolvers/AuthResolver";
 import { UserModel } from "../../models/User";
@@ -10,7 +10,7 @@ import { UserModel } from "../../models/User";
 /**
  * Create schema from models
  */
-async function generateSchema() {
+export async function generateSchema() {
 	return await buildTypeDefsAndResolvers({
 		resolvers: [AuthResolver, TaskResolver]
 	});
